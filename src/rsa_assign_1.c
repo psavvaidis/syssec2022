@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <gmp.h>
+#include <string.h>
+#include <stdlib.h>
 
 void help(){
     printf("Options:\n\
@@ -17,7 +19,7 @@ void decrypt();
 void generate();
 
 int main(int argc, char *argv[]){
-    FILE *input_f = NULL, *output_f = NULL, *key_f = NULL;
+    char *input_f = NULL, *output_f = NULL, *key_f = NULL;
     int toEncrypt = 0;
     int toDecrypt = 0;
 
@@ -58,4 +60,25 @@ int main(int argc, char *argv[]){
 
     return 0;
 }
+
+void generate(){
+    mpz_t p,q;
+    mpz_init(p);
+    mpz_init(q);
+    printf("Enter prime number p: ");
+    gmp_scanf("%Zd", p);
+    while(mpz_probab_prime_p(p, 24) == 0){
+        printf("The number you have entered is not a prime number.\nTry again: ");
+        gmp_scanf("%Zd", p);
+    }
+    printf("Enter prime number q: ");
+    gmp_scanf("%Zd", q);
+    while(mpz_probab_prime_p(q, 24) == 0){
+        printf("The number you have entered is not a prime number.\nTry again: ");
+        gmp_scanf("%Zd", q);
+    }
+}
+
+void encrypt(){}
+void decrypt(){}
 
