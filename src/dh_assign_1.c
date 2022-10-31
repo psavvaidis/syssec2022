@@ -6,7 +6,7 @@
 void help();
 
 int main(int argc, char *argv[]){
-    mpz_t p, g, a, b, secret_a, secret_b, a_sends, b_sends;
+    mpz_t p, g, a, b, secret_a, secret_b, public_a, public_b;
     char* outputFile = NULL;
 
     // initialize integers
@@ -16,8 +16,8 @@ int main(int argc, char *argv[]){
     mpz_init(g);
     mpz_init(secret_a);
     mpz_init(secret_b);
-    mpz_init(a_sends);
-    mpz_init(b_sends);
+    mpz_init(public_a);
+    mpz_init(public_b);
 
 
     for (int i = 1; i < argc; i++){
@@ -54,16 +54,20 @@ int main(int argc, char *argv[]){
 
 
     // computing nums to be sent
-    mpz_powm(a_sends, g, a, p);
-    mpz_powm(b_sends, g, b, p);
+    mpz_powm(public_a, g, a, p);
+    mpz_powm(public_b, g, b, p);
 
     // computing secret
-    mpz_powm(secret_a, b_sends, a, p);
-    mpz_powm(secret_b, a_sends, b, p);
+    mpz_powm(secret_a, public_b, a, p);
+    mpz_powm(secret_b, public_a, b, p);
 
+    //validating that the secret is shared.
     if(mpz_cmp(secret_a, secret_b)==0){
         printf("Secret was successfully shared\n");
-        gmp_printf("%Zd, %Zd\n", secret_a, secret_b);
+        //Writing the file
+        FILE* output = fopen(outputFile, "w");
+        gmp_fprintf(output, "%Zd, %Zd, %Zd\n", public_a, public_b, secret_a);
+        fclose(output);
     }else{
         printf("Error sharing secret\n");
     }
