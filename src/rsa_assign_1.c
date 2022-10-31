@@ -14,8 +14,8 @@ void help(){
     -h\t\tThis help message\n");
 }
 
-void encrypt();
-void decrypt();
+void encrypt(char*, char*, char*);
+void decrypt(char*, char*, char*);
 void generate();
 
 int main(int argc, char *argv[]){
@@ -62,11 +62,13 @@ int main(int argc, char *argv[]){
 }
 
 void generate(){
-    mpz_t p,q, n, lambda_n;
+    mpz_t p,q, n, lambda_n, e, d;
     mpz_init(p);
     mpz_init(q);
     mpz_init(n);
+    mpz_init(d);
     mpz_init(lambda_n);
+    mpz_init_set_ui(e, 3);
 
     // Read User Input and checkif prime
     printf("Enter prime number p: ");
@@ -90,9 +92,26 @@ void generate(){
     mpz_sub_ui(q,q,1);
     mpz_mul(lambda_n,p,q);
 
+    // Calculate d
+    mpz_invert(d, e, lambda_n);
+
+    FILE *public_f = NULL;
+    FILE *private_f = NULL;
+
+    public_f = fopen("public_key.txt", "w+");
+    gmp_fprintf(public_f, "%Zd\n", n);
+    gmp_fprintf(public_f, "%Zd\n", d);
+    fclose(public_f);
+    
+    private_f = fopen("private_key.txt", "w+");
+    gmp_fprintf(private_f, "%Zd\n", n);
+    gmp_fprintf(private_f, "%Zd\n", e);
+    fclose(private_f);
 
 }
 
-void encrypt(){}
-void decrypt(){}
+void encrypt(char* inputFileName, char* outputFileName, char* keyFileName){
+
+}
+void decrypt(char* inputFileName, char* outputFileName, char* keyFileName){}
 
