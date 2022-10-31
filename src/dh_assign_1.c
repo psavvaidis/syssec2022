@@ -43,6 +43,10 @@ int main(int argc, char *argv[]){
             mpz_set_str(b, argv[++i],0);
         }
     }
+    if(outputFile == NULL){
+        printf("Error: you haven't specified output file.\n Type \"-h\" for options\n");
+        return -1;
+    }
     if(mpz_cmp(a, p)>0){
         printf("a must be smaller than p. try again.\n");
         return -1;
