@@ -62,9 +62,13 @@ int main(int argc, char *argv[]){
 }
 
 void generate(){
-    mpz_t p,q;
+    mpz_t p,q, n, lambda_n;
     mpz_init(p);
     mpz_init(q);
+    mpz_init(n);
+    mpz_init(lambda_n);
+
+    // Read User Input and checkif prime
     printf("Enter prime number p: ");
     gmp_scanf("%Zd", p);
     while(mpz_probab_prime_p(p, 24) == 0){
@@ -77,6 +81,16 @@ void generate(){
         printf("The number you have entered is not a prime number.\nTry again: ");
         gmp_scanf("%Zd", q);
     }
+
+    // Calculate n = p*q
+    mpz_mul(n, q, p);   
+
+    // Calculate lambda_n = (p-1)*(q-1)
+    mpz_sub_ui(p,p,1);
+    mpz_sub_ui(q,q,1);
+    mpz_mul(lambda_n,p,q);
+
+
 }
 
 void encrypt(){}
