@@ -1,12 +1,26 @@
 #include <stdio.h>
 #include <gmp.h>
+#include <string.h>
+#include <stdlib.h>
 
 void help();
 
 int main(int argc, char *argv[]){
-
     mpz_t p, g, a, b;
-    help();
+    char* outputFile = NULL;
+
+    for (int i = 1; i < argc; i++){
+        if(strcmp(argv[i],"-h") == 0){
+            help();
+            return 0;
+        }else if(strcmp(argv[i],"-o")==0){
+            outputFile = (char*)malloc(strlen(argv[++i]));
+            strcpy(outputFile, argv[i]);
+        }
+    }
+
+    
+    printf("%s",outputFile);
 
     return 0;
 }
