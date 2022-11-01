@@ -126,11 +126,11 @@ void encrypt(char* inputFileName, char* outputFileName, char* keyFileName){
 
         char *padded_c = (char *)malloc(8);
         sprintf(padded_c, "%08d", c);
+        // printf("%s",padded_c);
         mpz_t cipher;
         mpz_init(cipher);
 
-        mpz_set_str(cipher,padded_c, 0);
-        // gmp_printf("%08d\n", cipher);
+        mpz_set_str(cipher,padded_c, 10);
         mpz_powm(cipher, cipher, e, n);
         gmp_fprintf(output,"%08Zd", cipher);
     }
@@ -140,6 +140,30 @@ void encrypt(char* inputFileName, char* outputFileName, char* keyFileName){
 }
 
 void decrypt(char* inputFileName, char* outputFileName, char* keyFileName){
+    FILE *input = NULL, *output = NULL, *key = NULL;
+    mpz_t n, d;
+    mpz_init(n);
+    mpz_init(d);
+
+    key = fopen(keyFileName, "r");
+    gmp_fscanf(key,"%Zd\n%Zd\n", n, d);
+    fclose(key);
+
+    input = fopen(inputFileName, "r");
+    output = fopen(outputFileName, "w+");
+
+    mpz_t buf;
+    mpz_init(buf);
+    while(gmp_fscanf(input, "%08Zd", &buf)==1){
+        int myChar;
+        mpz_powm(buf, buf, d, n);
+        // mpz_export(myChar, NULL, 1, sizeof(char),0,0,buf);
+        myChar = mpz_get_ui(buf);
+        fprintf(output,"%c",myChar);
+    }
     
+    
+    fclose(input);
+    // fclose(output);
 }
 
