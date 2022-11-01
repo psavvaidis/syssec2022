@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 void help(){
     printf("Options:\n\
     -i\tpath\tPath to input file\n\
@@ -19,7 +20,7 @@ void decrypt(char*, char*, char*);
 void generate();
 
 int main(int argc, char *argv[]){
-    char *input_f = NULL, *output_f = NULL, *key_f = NULL;
+    char *input = NULL, *output = NULL, *key = NULL;
     int toEncrypt = 0;
     int toDecrypt = 0;
 
@@ -30,16 +31,16 @@ int main(int argc, char *argv[]){
             return 0;
         }// get the output file name from arguments
         else if(strcmp(argv[i],"-i")==0){
-            input_f = (char*)malloc(strlen(argv[++i]));
-            strcpy(input_f, argv[i]);
+            input = (char*)malloc(strlen(argv[++i]));
+            strcpy(input, argv[i]);
         }// get the output file name from arguments
         else if(strcmp(argv[i],"-o")==0){
-            output_f = (char*)malloc(strlen(argv[++i]));
-            strcpy(output_f, argv[i]);
+            output = (char*)malloc(strlen(argv[++i]));
+            strcpy(output, argv[i]);
         }// get the output file name from arguments
         else if(strcmp(argv[i],"-k")==0){
-            key_f = (char*)malloc(strlen(argv[++i]));
-            strcpy(key_f, argv[i]);
+            key = (char*)malloc(strlen(argv[++i]));
+            strcpy(key, argv[i]);
         }else if(strcmp(argv[i],"-g")==0){
             generate();
             return 0;
@@ -53,9 +54,9 @@ int main(int argc, char *argv[]){
     }
 
     if(toEncrypt){
-        encrypt();
+        encrypt(input, output, key);
     }else if (toDecrypt){
-        decrypt();
+        decrypt(input, output, key);
     }
 
     return 0;
@@ -95,23 +96,50 @@ void generate(){
     // Calculate d
     mpz_invert(d, e, lambda_n);
 
-    FILE *public_f = NULL;
-    FILE *private_f = NULL;
+    FILE *public = NULL;
+    FILE *private = NULL;
 
-    public_f = fopen("public_key.txt", "w+");
-    gmp_fprintf(public_f, "%Zd\n", n);
-    gmp_fprintf(public_f, "%Zd\n", d);
-    fclose(public_f);
+    public = fopen("public_key.txt", "w+");
+    gmp_fprintf(public, "%Zd\n%Zd\n", n, d);
+    fclose(public);
     
-    private_f = fopen("private_key.txt", "w+");
-    gmp_fprintf(private_f, "%Zd\n", n);
-    gmp_fprintf(private_f, "%Zd\n", e);
-    fclose(private_f);
+    private = fopen("private_key.txt", "w+");
+    gmp_fprintf(private, "%Zd\n%Zd\n", n, e);
+    fclose(private);
 
 }
 
 void encrypt(char* inputFileName, char* outputFileName, char* keyFileName){
+    FILE *input, *output, *key;
+    mpz_t n, e;
+    mpz_init(n); mpz_init(e);
+    // Get key components
+    key = fopen(keyFileName, "r");
+    gmp_fscanf(key,"%Zd\n%Zd\n", n, e);
+    fclose(key);
 
+    input = fopen(inputFileName, "r");
+    output = fopen(outputFileName, "w+");
+    while(1){
+        char c = fgetc(input);
+        if(c == EOF){ break;}
+
+        char *padded_c = (char *)malloc(8);
+        sprintf(padded_c, "%08d", c);
+        mpz_t cipher;
+        mpz_init(cipher);
+
+        mpz_set_str(cipher,padded_c, 0);
+        // gmp_printf("%08d\n", cipher);
+        mpz_powm(cipher, cipher, e, n);
+        gmp_fprintf(output,"%08Zd", cipher);
+    }
+    
+    fclose(input);
+    fclose(output);
 }
-void decrypt(char* inputFileName, char* outputFileName, char* keyFileName){}
+
+void decrypt(char* inputFileName, char* outputFileName, char* keyFileName){
+    
+}
 
