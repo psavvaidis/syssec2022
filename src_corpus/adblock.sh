@@ -15,6 +15,16 @@ function adBlock() {
         # Find different and same domains in ‘domainNames.txt’ and ‘domainsNames2.txt’ files 
 	    # and write them in “IPAddressesDifferent.txt and IPAddressesSame.txt" respectively
         
+        while IFS= read -r line
+        do
+            grep -i $line $domainNames2 >/dev/null;
+            if [[ $? == 0 ]]; then
+                echo $line >> $IPAddressesSame;
+            else
+                echo $line >> $IPAddressesDifferent;
+            fi
+        done < $domainNames
+
         true
             
     elif [ "$1" = "-ipssame"  ]; then
