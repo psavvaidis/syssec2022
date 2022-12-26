@@ -25,11 +25,9 @@ function adBlock() {
             # It is saved in the IPAdressesSame.txt file
             # Otherwise, it is saved in the IPAdressesDifferent.txt file
             if [[ $? == 0 ]]; then
-                host $line | egrep '[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}' -o
- >> $IPAddressesSame;
+                host $line | egrep '[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}' -o -m 1 >> $IPAddressesSame;
             else
-                host $line | egrep '[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}' -o
->> $IPAddressesDifferent;
+                host $line | egrep '[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}' -o -m 1 >> $IPAddressesDifferent;
             fi
         done < $domainNames
 
