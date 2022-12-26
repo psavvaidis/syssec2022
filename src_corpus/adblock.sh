@@ -35,11 +35,18 @@ function adBlock() {
             
     elif [ "$1" = "-ipssame"  ]; then
         # Configure the DROP adblock rule based on the IP addresses of $IPAddressesSame file.
+        while IFS= read -r line
+        do
+            # apply the DROP RULE
+        done < $IPAddressesSame
         
         true
     elif [ "$1" = "-ipsdiff"  ]; then
         # Configure the REJECT adblock rule based on the IP addresses of $IPAddressesDifferent file.
-        
+        while IFS= read -r line
+        do
+            # apply the REJECT RULE
+        done < $IPAddressesDifferent
 
         true
         
@@ -54,10 +61,17 @@ function adBlock() {
         
     elif [ "$1" = "-reset"  ]; then
         # Reset rules to default settings (i.e. accept all).
-        # Write your code here...
-        # ...
-        # ...
-        true
+        iptables -P INPUT ACCEPT
+        iptables -P FORWARD ACCEPT
+        iptables -P OUTPUT ACCEPT
+        iptables -F
+        iptables -X
+        iptables -t nat -F
+        iptables -t nat -X
+        iptables -t mangle -F
+        iptables -t mangle -X
+        iptables -t raw -F
+        iptables -t raw -X
 
         
     elif [ "$1" = "-list"  ]; then
