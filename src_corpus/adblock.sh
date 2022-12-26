@@ -45,17 +45,11 @@ function adBlock() {
         
     elif [ "$1" = "-save"  ]; then
         # Save rules to $adblockRules file.
-        # Write your code here...
-        # ...
-        # ...
-        true
+        iptables-save > adblockRules
         
     elif [ "$1" = "-load"  ]; then
         # Load rules from $adblockRules file.
-        # Write your code here...
-        # ...
-        # ...
-        true
+        iptables-restore < adblockRules
 
         
     elif [ "$1" = "-reset"  ]; then
