@@ -37,7 +37,7 @@ function adBlock() {
         # Configure the DROP adblock rule based on the IP addresses of $IPAddressesSame file.
         while IFS= read -r line
         do
-            echo "non empty";
+            iptables -A INPUT -s $line -j DROP
         done < $IPAddressesSame
         
         exit 0
@@ -46,10 +46,10 @@ function adBlock() {
         while IFS= read -r line
         do
             # apply the REJECT RULE
-            echo "non empty";
+            iptables -A INPUT -s $line -j REJECT
         done < $IPAddressesDifferent
 
-        true
+        exit 0
         
     elif [ "$1" = "-save"  ]; then
         # Save rules to $adblockRules file.
@@ -59,7 +59,7 @@ function adBlock() {
         # Load rules from $adblockRules file.
         iptables-restore < adblockRules
 
-        
+        exit 0 
     elif [ "$1" = "-reset"  ]; then
         # Reset rules to default settings (i.e. accept all).
         iptables -P INPUT ACCEPT
@@ -74,10 +74,13 @@ function adBlock() {
         iptables -t raw -F
         iptables -t raw -X
 
+        exit 0
+
         
     elif [ "$1" = "-list"  ]; then
         # List current rules.
         iptables -L -v -n
+        exit 0
         
     elif [ "$1" = "-help"  ]; then
         printf "This script is responsible for creating a simple adblock mechanism. It rejects connections from specific domain names or IP addresses using iptables.\n\n"
