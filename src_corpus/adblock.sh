@@ -31,21 +31,22 @@ function adBlock() {
             fi
         done < $domainNames
 
-        true
+        exit 0
             
     elif [ "$1" = "-ipssame"  ]; then
         # Configure the DROP adblock rule based on the IP addresses of $IPAddressesSame file.
         while IFS= read -r line
         do
-            # apply the DROP RULE
+            echo "non empty";
         done < $IPAddressesSame
         
-        true
+        exit 0
     elif [ "$1" = "-ipsdiff"  ]; then
         # Configure the REJECT adblock rule based on the IP addresses of $IPAddressesDifferent file.
         while IFS= read -r line
         do
             # apply the REJECT RULE
+            echo "non empty";
         done < $IPAddressesDifferent
 
         true
@@ -76,10 +77,7 @@ function adBlock() {
         
     elif [ "$1" = "-list"  ]; then
         # List current rules.
-        # Write your code here...
-        # ...
-        # ...
-        true
+        iptables -L -v -n
         
     elif [ "$1" = "-help"  ]; then
         printf "This script is responsible for creating a simple adblock mechanism. It rejects connections from specific domain names or IP addresses using iptables.\n\n"
